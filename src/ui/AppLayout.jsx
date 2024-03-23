@@ -13,7 +13,7 @@ const AppLayout = () => {
         <Link to={"/"}>
           <img
             className="  w-36"
-            src={"src/assets/images/logo.svg"}
+            src={"/logo.svg"}
           />
         </Link>
         <TopBar />
