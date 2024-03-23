@@ -10,6 +10,7 @@ import Post from "./Pages/Post";
 import Profile from "./Pages/Profile";
 import Edit from "./Pages/Edit";
 import Saved from "./Pages/Saved";
+import Search from "./Pages/Search";
 
 const App = () => {
   useEffect(() => {
@@ -44,11 +45,15 @@ const App = () => {
           element={<Saved />}
         />
         <Route
+          path="/search"
+          element={<Search />}
+        />
+        <Route
           path="/profile"
           element={<Profile />}
         />
         <Route
-          path="/edit:id"
+          path="/edit/:id"
           element={<Edit />}
         />
         <Route
