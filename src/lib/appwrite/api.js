@@ -1,4 +1,4 @@
-import { account } from "./config";
+import { account, avatar, database, Databaseid, userid } from "./config";
 import { ID } from "appwrite";
 
 //create user;
@@ -12,12 +12,35 @@ export async function creatUser(value) {
       value?.name
     );
 
-    console.log(userInfo);
     if (!userInfo) throw new Error();
 
     await account.createEmailPasswordSession(value?.email, value?.password);
 
-    return userInfo;
+    const data = {
+      accountId: userInfo?.$id,
+      name: userInfo?.name,
+      email: userInfo?.email,
+      password: value?.password,
+      username: value?.username,
+    };
+    //write user to database
+    const user = await database.createDocument(
+      Databaseid,
+      userid,
+      ID.unique(),
+      data
+    );
+
+    if (!user) throw new Error("Error writing to database");
+
+    const AvatarImg = await avatarInitials();
+
+    const userData = {
+      ...user,
+      avatarUrl: AvatarImg,
+    };
+
+    return userData;
   } catch (err) {
     console.error(err);
   }
@@ -32,9 +55,29 @@ export async function loginUser(value) {
     );
 
     if (!userInfo) throw new Error();
+    const AvatarImg = await avatarInitials();
 
     console.log(userInfo);
-    return userInfo;
+
+    const userData = {
+      ...userInfo,
+      avatarUrl: AvatarImg,
+    };
+    return userData;
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+//get user avatar
+
+export async function avatarInitials() {
+  try {
+    const avatarInitial = avatar.getInitials();
+    console.log(avatarInitial);
+
+    if (!avatarInitial) throw new Error("error getting avatar");
+    return avatarInitial;
   } catch (err) {
     console.error(err);
   }

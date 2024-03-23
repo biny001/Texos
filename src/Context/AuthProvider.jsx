@@ -26,6 +26,7 @@ const InitialState = {
 const AuthProvider = ({ children }) => {
   const [info, setInfo] = useState(initialUser); // corrected initial state
   const [loading, setIsLoading] = useState(false);
+  const [avatarUrl, setAvatarUrl] = useState("");
   const navigate = useNavigate();
 
   const checkAuthUser = async () => {
@@ -40,6 +41,7 @@ const AuthProvider = ({ children }) => {
           name: user.name,
           email: user.email,
           username: user.email,
+          avatarUrl,
         });
       }
       setIsLoading(false);
@@ -68,10 +70,17 @@ const AuthProvider = ({ children }) => {
     }
   }, [info]);
 
-  // console.log(info);
+  console.log(avatarUrl);
   return (
     <AuthContext.Provider
-      value={{ info, setInfo, checkAuthUser, loading, initialUser }}
+      value={{
+        info,
+        setInfo,
+        checkAuthUser,
+        loading,
+        initialUser,
+        setAvatarUrl,
+      }}
     >
       {children}
     </AuthContext.Provider>

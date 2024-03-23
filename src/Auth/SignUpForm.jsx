@@ -12,13 +12,15 @@ const SignUpForm = () => {
     formState: { errors, isValid }, // Destructure isValid from formState
   } = useForm();
 
-  const { checkAuthUser, loading } = useContext(AuthContext);
+  const { checkAuthUser, loading, setAvatarUrl } = useContext(AuthContext);
   const { mutateAsync: createUser, isPending } = useCreateUser();
 
   async function onSubmit(values) {
     const userData = await createUser(values);
+
     if (userData) {
       checkAuthUser();
+      setAvatarUrl(userData?.avatarUrl);
     }
   }
 
