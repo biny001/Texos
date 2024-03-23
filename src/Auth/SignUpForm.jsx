@@ -12,7 +12,7 @@ const SignUpForm = () => {
     formState: { errors, isValid }, // Destructure isValid from formState
   } = useForm();
 
-  const { checkAuthUser } = useContext(AuthContext);
+  const { checkAuthUser, loading } = useContext(AuthContext);
   const { mutateAsync: createUser, isPending } = useCreateUser();
 
   async function onSubmit(values) {
@@ -27,7 +27,7 @@ const SignUpForm = () => {
       <div className="flex flex-col items-center gap-2">
         <img
           className="  w-54"
-          src="src\assets\images\logo.svg"
+          src="public\logo.svg"
         />
         <h3 className=" text-xs">join our growing community</h3>
       </div>
@@ -95,12 +95,12 @@ const SignUpForm = () => {
           )}
         </div>
         <button
-          disabled={!isValid || isPending} // Disable button if form is not valid
+          disabled={!isValid || isPending || loading} // Disable button if form is not valid
           className={` text-sm font-extralight  bg-blue-950   text-stone-300 py-1 px-2 rounded-lg ${
             !isValid ? "cursor-not-allowed" : "cursor-pointer"
           }`}
         >
-          {isPending ? "loading..." : "sign up"}
+          {isPending || loading ? "loading..." : "sign up"}
         </button>
       </form>
       <div>

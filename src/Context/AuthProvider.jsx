@@ -30,8 +30,9 @@ const AuthProvider = ({ children }) => {
 
   const checkAuthUser = async () => {
     try {
-      setIsLoading(false);
+      setIsLoading(true);
       const user = await getActiveSession();
+
       if (user) {
         setInfo({
           ...info,
@@ -41,8 +42,8 @@ const AuthProvider = ({ children }) => {
           username: user.email,
         });
       }
+      setIsLoading(false);
 
-      setIsLoading(true);
       console.log(user);
 
       if (!user) {
@@ -59,16 +60,19 @@ const AuthProvider = ({ children }) => {
 
     if (
       cookieFallback === "[]" || // Check if it's an empty array
-      cookieFallback === null // Check if it's null
+      cookieFallback === null || // Check if it's null
+      cookieFallback === undefined // Check if it's undefined
     ) {
       // If any of the conditions above are true, navigate to the "/sign-in" page
       navigate("/sign-up");
     }
-  }, []);
+  }, [info]);
 
   // console.log(info);
   return (
-    <AuthContext.Provider value={{ info, setInfo, checkAuthUser }}>
+    <AuthContext.Provider
+      value={{ info, setInfo, checkAuthUser, loading, initialUser }}
+    >
       {children}
     </AuthContext.Provider>
   );

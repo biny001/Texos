@@ -23,6 +23,23 @@ export async function creatUser(value) {
   }
 }
 
+//login user
+export async function loginUser(value) {
+  try {
+    const userInfo = await account.createEmailPasswordSession(
+      value?.email,
+      value?.password
+    );
+
+    if (!userInfo) throw new Error();
+
+    console.log(userInfo);
+    return userInfo;
+  } catch (err) {
+    console.error(err);
+  }
+}
+
 //get current session;
 
 export async function getActiveSession() {
@@ -35,5 +52,14 @@ export async function getActiveSession() {
     return activeUser;
   } catch (err) {
     console.log(err);
+  }
+}
+
+export async function signOutLoggedInUser() {
+  try {
+    await account.deleteSession("current");
+    console.log("logged out");
+  } catch (error) {
+    console.log(error);
   }
 }
