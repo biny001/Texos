@@ -30,7 +30,7 @@ const SignInForm = () => {
       <div className="flex flex-col items-center gap-2">
         <img
           className="  w-54"
-          src="public\logo.svg"
+          src={"/logo.svg"}
         />
         <h3 className=" text-xs">Welcome back</h3>
       </div>
