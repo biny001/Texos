@@ -1,180 +1,121 @@
-import { Button } from "@/components/ui/button";
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useCallback } from "react";
-import { useDropzone } from "react-dropzone";
+import { AuthContext } from "@/Context/AuthProvider";
+import { account } from "@/lib/appwrite/config";
+import { useCreateUser } from "@/lib/react-query/queryAndMutations";
+import React, { useContext, useState } from "react";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
+import { Link } from "react-router-dom";
 
-const formSchema = z.object({
-  username: z
-    .string({
-      required_error: "Username is required.",
-    })
-    .min(2, {
-      message: "Username must be at least 2 characters.",
-    }),
-  email: z
-    .string({
-      required_error: "Email is required.",
-    })
-    .email(),
-  password: z
-    .string({
-      required_error: "Password is required.",
-    })
-    .min(6, {
-      message: "Password must be at least 6 characters.",
-    }),
-  confirmPassword: z
-    .string({
-      required_error: "Please confirm your password.",
-    })
-    .refine((value, data) => value !== data?.password),
-  avatar: z.any(),
-});
+const SignUpForm = () => {
+  const {
+    handleSubmit,
+    register,
+    formState: { errors, isValid }, // Destructure isValid from formState
+  } = useForm();
 
-export default function SignUpForm() {
-  // 1. Define your form.
-  const form = useForm({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      username: "",
-      email: "",
-      password: "",
-      confirmPassword: "",
-    },
-  });
+  const { checkAuthUser } = useContext(AuthContext);
+  const { mutateAsync: createUser, isPending } = useCreateUser();
 
-  // 2. Define a submit handler.
-  function onSubmit({ confirmPassword, ...values }) {
-    console.log(values);
+  async function onSubmit(values) {
+    const userData = await createUser(values);
+    if (userData) {
+      checkAuthUser();
+    }
   }
-  const onDrop = useCallback(
-    (acceptedFiles) => {
-      console.log(acceptedFiles);
-      form.setValue("avatar", acceptedFiles[0]); // Corrected spelling of acceptedFiles
-    },
-    [form]
-  );
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
 
   return (
-    <Form {...form}>
+    <div className=" flex flex-col gap-4  border border-blue-900 py-10 px-20 rounded-lg  shadow-lg shadow-blue-300/30">
+      <div className="flex flex-col items-center gap-2">
+        <img
+          className="  w-54"
+          src="src\assets\images\logo.svg"
+        />
+        <h3 className=" text-xs">join our growing community</h3>
+      </div>
       <form
-        onSubmit={form.handleSubmit(onSubmit)}
-        className="space-y-1    w-60 sm:w-64 md:w-72 lg:w-80  xl:w-96 2xl:w-96"
+        onSubmit={handleSubmit(onSubmit)}
+        className=" min-w-52 space-y-3 "
       >
-        {/* Username field */}
-        <FormField
-          control={form.control}
-          name="username"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Username</FormLabel>
-              <FormControl>
-                <Input
-                  placeholder="John"
-                  {...field}
-                />
-              </FormControl>
-
-              <FormMessage />
-            </FormItem>
+        <div className="label-div">
+          <label htmlFor="name">name </label>
+          <input
+            {...register("name", {
+              required: "name is required",
+            })}
+            id="name"
+            className=" bg-slate-800/40 outline-none"
+          ></input>
+          {errors?.name && (
+            <p className=" text-red-600 text-sm">{errors?.name?.message}</p>
           )}
-        />
-
-        {/* Email field */}
-        <FormField
-          control={form.control}
-          name="email"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Email</FormLabel>
-              <FormControl>
-                <Input
-                  type="email"
-                  placeholder="john@example.com"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
+        </div>
+        <div className="label-div">
+          <label htmlFor="username">username </label>
+          <input
+            {...register("username", {
+              required: "username is required",
+            })}
+            id="username"
+            className=" bg-slate-800/40 outline-none"
+          ></input>
+          {errors?.username && (
+            <p className=" text-red-600 text-sm">{errors?.username?.message}</p>
           )}
-        />
-
-        {/* Password field */}
-        <FormField
-          control={form.control}
-          name="password"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Password</FormLabel>
-              <FormControl>
-                <Input
-                  type="password"
-                  placeholder="Password"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
+        </div>
+        <div className="label-div">
+          <label htmlFor="email">email </label>
+          <input
+            type="email"
+            {...register("email", {
+              required: "email is required",
+              pattern: {
+                value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                message: "invalid email address",
+              },
+            })}
+            id="email"
+            className=" bg-slate-800/40 outline-none"
+          ></input>
+          {errors?.email && (
+            <p className=" text-red-600 text-sm">{errors?.email?.message}</p>
           )}
-        />
-
-        {/* Confirm Password field */}
-        <FormField
-          control={form.control}
-          name="confirmPassword"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Confirm Password</FormLabel>
-              <FormControl>
-                <Input
-                  type="password"
-                  placeholder="Confirm Password"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
+        </div>
+        <div className="label-div">
+          <label htmlFor="password">password </label>
+          <input
+            type="password"
+            {...register("password", {
+              required: "password is required",
+              minLength: 6,
+            })}
+            id="password"
+            className=" bg-slate-800/40 outline-none"
+          ></input>
+          {errors?.password && (
+            <p className=" text-red-600 text-sm">{errors?.password?.message}</p>
           )}
-        />
-
-        {/* Avatar field */}
-        <FormItem className="flex flex-col w-full text-xs  ">
-          <FormLabel>Avatar</FormLabel>
-          <div
-            {...getRootProps()}
-            className="flex  w-full items-center  justify-center   h-20 border-dashed border-2 border-gray-800 rounded-lg cursor-pointer"
-          >
-            <div className=" flex flex-col  items-center gap-3 justify-center ">
-              <img
-                width={"36px"}
-                src="src\assets\icons\gallery-add.svg"
-              />
-              <span>Drag or click to select avatar</span>
-            </div>
-            <input {...getInputProps()} />
-          </div>
-        </FormItem>
-
-        <Button
-          className="w-full   "
-          type="submit"
+        </div>
+        <button
+          disabled={!isValid || isPending} // Disable button if form is not valid
+          className={` text-sm font-extralight  bg-blue-950   text-stone-300 py-1 px-2 rounded-lg ${
+            !isValid ? "cursor-not-allowed" : "cursor-pointer"
+          }`}
         >
-          Submit
-        </Button>
+          {isPending ? "loading..." : "sign up"}
+        </button>
       </form>
-    </Form>
+      <div>
+        <p className=" text-xs">
+          Already have an account?{" "}
+          <Link
+            className="  text-blue-900 text-sm  underline "
+            to={"/sign-in"}
+          >
+            Login
+          </Link>
+        </p>
+      </div>
+    </div>
   );
-}
+};
+
+export default SignUpForm;

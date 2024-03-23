@@ -16,48 +16,47 @@ const App = () => {
     document.documentElement.classList.add("dark");
   }, []);
   return (
-    <BrowserRouter>
-      <Routes>
-        {/* AuthRoute */}
-        <Route element={<AuthLayout />}>
-          <Route
-            element={<SignUpForm />}
-            path="/sign-up"
-          />
-          <Route
-            element={<SignInForm />}
-            path="/sign-in"
-          />
-        </Route>
-        {/* AppRoute */}
-        <Route element={<AppLayout />}>
-          <Route
-            path="/"
-            element={<Home />}
-          />
-          <Route
-            path="/post"
-            element={<Post />}
-          />
-          <Route
-            path="/saved"
-            element={<Saved />}
-          />
-          <Route
-            path="/profile"
-            element={<Profile />}
-          />
-          <Route
-            path="/edit:id"
-            element={<Edit />}
-          />
-          <Route
-            path="*"
-            element={<Error />}
-          />
-        </Route>
-      </Routes>
-    </BrowserRouter>
+    <Routes>
+      {/* AuthRoute */}
+      <Route element={<AuthLayout />}>
+        <Route
+          element={<SignUpForm />}
+          path="/sign-up"
+        />
+        <Route
+          element={<SignInForm />}
+          path="/sign-in"
+        />
+      </Route>
+      {/* AppRoute */}
+
+      <Route element={<AppLayout />}>
+        <Route
+          path="/"
+          element={<Home />}
+        />
+        <Route
+          path="/post"
+          element={<Post />}
+        />
+        <Route
+          path="/saved"
+          element={<Saved />}
+        />
+        <Route
+          path="/profile"
+          element={<Profile />}
+        />
+        <Route
+          path="/edit:id"
+          element={<Edit />}
+        />
+        <Route
+          path="*"
+          element={<Error />}
+        />
+      </Route>
+    </Routes>
   );
 };
 

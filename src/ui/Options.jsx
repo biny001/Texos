@@ -21,7 +21,7 @@ export default function Options() {
       <DropdownMenuContent className=" w-40 bg-black  ">
         <DropdownMenuGroup className=" ">
           <DropdownMenuItem
-            onClick={console.log("hllo")}
+            // onClick={console.log("hllo")}
             className=" cursor-pointer "
           >
             Profile

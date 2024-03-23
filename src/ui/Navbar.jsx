@@ -28,7 +28,7 @@ const Navbar = () => {
       icon: <FiEdit size="24px" />,
     },
     {
-      to: "/save",
+      to: "/saved",
       iconActive: <GoHeartFill size="24px" />,
       icon: <GoHeart size="24px" />,
     },

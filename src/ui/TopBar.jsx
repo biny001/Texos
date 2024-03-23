@@ -39,7 +39,7 @@ const TopBar = () => {
       ),
     },
     {
-      to: "/save",
+      to: "/saved",
       iconActive: <GoHeartFill size="28px" />,
       icon: <GoHeart size="28px" />,
     },
