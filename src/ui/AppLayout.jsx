@@ -20,7 +20,7 @@ const AppLayout = () => {
         <Options />
       </div>
       <div className="   mx-auto  max-w-[600px]">
-        <div className=" w-full flex items-center justify-center">
+        <div className=" w-full h-screen flex items-center justify-center">
           <Outlet />
         </div>
       </div>

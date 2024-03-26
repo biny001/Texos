@@ -40,7 +40,7 @@ const Navbar = () => {
   ];
 
   return (
-    <div className="w-full  absolute bottom-0 py-2 sm:hidden ">
+    <div className="w-full  fixed  bottom-0 py-2 sm:hidden ">
       <ul className="w-full flex px-4 pb-2 justify-between min-h-8 items-center">
         {paths.map((item) => (
           <NavLink

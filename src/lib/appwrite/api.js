@@ -1,4 +1,12 @@
-import { account, Apiavatars, database, Databaseid, userid } from "./config";
+import {
+  account,
+  Apiavatars,
+  database,
+  Databaseid,
+  userid,
+  storage,
+  mediaid,
+} from "./config";
 import { ID, Query } from "appwrite";
 
 //create user;
@@ -123,4 +131,10 @@ export async function signOutLoggedInUser() {
   } catch (error) {
     console.log(error);
   }
+}
+
+export async function uploadMedia(file) {
+  const data = await storage.createFile(mediaid, ID.unique(), file);
+  console.log(data);
+  return data;
 }
