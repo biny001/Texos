@@ -9,26 +9,22 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { AuthContext } from "@/Context/AuthProvider";
 import { useUserSignOut } from "@/lib/react-query/queryAndMutations";
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import { CgLogOut, CgOptions } from "react-icons/cg";
 import { FiLogOut } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 
 export default function Options() {
-  const { setInfo, initialUser } = useContext(AuthContext);
+  const { setInfo, initialUser, checkAuthUser, isAuthenticated } =
+    useContext(AuthContext);
   const { mutateAsync: signOutUser, isSuccess, isError } = useUserSignOut();
   const navigate = useNavigate();
 
-  const handleSignOut = async () => {
-    await signOutUser();
-
-    setInfo(initialUser);
+  useEffect(() => {
     if (isSuccess) {
-      navigate("/sign-up");
-    } else if (isError) {
-      console.log("error signing out");
+      navigate(0);
     }
-  };
+  }, [isSuccess]);
 
   return (
     <DropdownMenu>
@@ -49,7 +45,7 @@ export default function Options() {
         </DropdownMenuGroup>
 
         <DropdownMenuItem
-          onClick={handleSignOut}
+          onClick={signOutUser}
           className=" cursor-pointer"
         >
           Log out

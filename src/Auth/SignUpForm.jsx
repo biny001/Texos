@@ -1,9 +1,10 @@
 import { AuthContext } from "@/Context/AuthProvider";
+import { loginUser } from "@/lib/appwrite/api";
 import { account } from "@/lib/appwrite/config";
 import { useCreateUser } from "@/lib/react-query/queryAndMutations";
 import React, { useContext, useState } from "react";
 import { useForm } from "react-hook-form";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const SignUpForm = () => {
   const {
@@ -12,15 +13,29 @@ const SignUpForm = () => {
     formState: { errors, isValid }, // Destructure isValid from formState
   } = useForm();
 
-  const { checkAuthUser, loading, setAvatarUrl } = useContext(AuthContext);
+  const { checkAuthUser, loading } = useContext(AuthContext);
   const { mutateAsync: createUser, isPending } = useCreateUser();
+  const navigate = useNavigate();
 
   async function onSubmit(values) {
     const userData = await createUser(values);
 
-    if (userData) {
-      checkAuthUser();
-      setAvatarUrl(userData?.avatarUrl);
+    if (!userData) {
+      return console.log("Unable to sign up");
+    }
+
+    const session = await loginUser({
+      email: userData?.email,
+      password: userData?.password,
+    });
+
+    if (!session) return console.log("sign-in failed please try again");
+
+    const isAuthenticated = await checkAuthUser();
+
+    if (isAuthenticated) navigate("/");
+    else {
+      return console.log("cant sign-up. please try again");
     }
   }
 
@@ -102,7 +117,7 @@ const SignUpForm = () => {
             !isValid ? "cursor-not-allowed" : "cursor-pointer"
           }`}
         >
-          {isPending || loading ? "loading..." : "sign up"}
+          {isPending ? "loading..." : "sign up"}
         </button>
       </form>
       <div>

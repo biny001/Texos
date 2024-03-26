@@ -1,4 +1,4 @@
-import React from "react";
+import { useContext } from "react";
 import { GoHome } from "react-icons/go";
 import { GoSearch } from "react-icons/go";
 import { IoPersonOutline } from "react-icons/io5";
@@ -9,8 +9,13 @@ import { GoHomeFill } from "react-icons/go";
 import { RiSearch2Fill } from "react-icons/ri";
 import { GoHeartFill } from "react-icons/go";
 import { IoPerson } from "react-icons/io5";
+import { AuthContext } from "@/Context/AuthProvider";
+import { useGetInitalAvatar } from "@/lib/react-query/queryAndMutations";
 
 const Navbar = () => {
+  const { info } = useContext(AuthContext);
+
+  // console.log(info);
   const paths = [
     {
       to: "/",
@@ -32,11 +37,6 @@ const Navbar = () => {
       iconActive: <GoHeartFill size="24px" />,
       icon: <GoHeart size="24px" />,
     },
-    {
-      to: "/profile",
-      iconActive: <IoPerson size="24px" />,
-      icon: <IoPersonOutline size="24px" />,
-    },
   ];
 
   return (
@@ -55,6 +55,20 @@ const Navbar = () => {
             )}
           </NavLink>
         ))}
+        <div className=" flex  items-center  justify-center pb-2">
+          <NavLink
+            to={"/profile"}
+            className="bg-transparent items-center border-none"
+          >
+            <img
+              width={"26px"}
+              className=" rounded-full"
+              src={
+                info?.avatarUrl || `src/assets/icons/profile-placeholder.svg `
+              }
+            />
+          </NavLink>
+        </div>
       </ul>
     </div>
   );

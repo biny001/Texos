@@ -1,6 +1,9 @@
-import { getActiveSession } from "@/lib/appwrite/api";
+import { getActiveSession, getCurrentUser } from "@/lib/appwrite/api";
 import { account } from "@/lib/appwrite/config";
-import { useGetActiveUser } from "@/lib/react-query/queryAndMutations";
+import {
+  useGetActiveUser,
+  useGetInitalAvatar,
+} from "@/lib/react-query/queryAndMutations";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { createContext } from "react";
@@ -26,40 +29,45 @@ const InitialState = {
 const AuthProvider = ({ children }) => {
   const [info, setInfo] = useState(initialUser); // corrected initial state
   const [loading, setIsLoading] = useState(false);
-  const [avatarUrl, setAvatarUrl] = useState("");
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [url, setAvatarUrl] = useState("");
+  const { mutate: getAvatar, isPending } = useGetInitalAvatar();
+
   const navigate = useNavigate();
 
   const checkAuthUser = async () => {
     try {
       setIsLoading(true);
-      const user = await getActiveSession();
 
+      const user = await getCurrentUser();
       if (user) {
-        setInfo({
-          ...info,
-          accountId: user.$id,
-          name: user.name,
-          email: user.email,
-          username: user.email,
-          avatarUrl,
-        });
+        setInfo((prevUser) => ({
+          ...prevUser,
+          accountId: user?.$id,
+          name: user?.name,
+          username: user?.username,
+          email: user?.email,
+          avatarUrl: user?.avatarUrl,
+        }));
+
+        setIsAuthenticated(true);
+
+        return true;
       }
+
       setIsLoading(false);
 
-      console.log(user);
-
-      if (!user) {
-        navigate("/sign-in");
-      }
-      navigate("/");
+      return false;
     } catch (error) {
       console.log("Error: ", error);
+      return false;
+    } finally {
+      setIsLoading(false);
     }
   };
 
+  const cookieFallback = localStorage.getItem("cookieFallback");
   useEffect(() => {
-    const cookieFallback = localStorage.getItem("cookieFallback");
-
     if (
       cookieFallback === "[]" || // Check if it's an empty array
       cookieFallback === null || // Check if it's null
@@ -68,9 +76,17 @@ const AuthProvider = ({ children }) => {
       // If any of the conditions above are true, navigate to the "/sign-in" page
       navigate("/sign-up");
     }
-  }, [info]);
+    const fetchData = async () => {
+      const isAuthenticated = await checkAuthUser();
+      if (!isAuthenticated) {
+        navigate("/sign-up");
+      }
+    };
 
-  console.log(avatarUrl);
+    fetchData();
+  }, []);
+
+  // console.log(avatarUrl);
   return (
     <AuthContext.Provider
       value={{
@@ -79,7 +95,7 @@ const AuthProvider = ({ children }) => {
         checkAuthUser,
         loading,
         initialUser,
-        setAvatarUrl,
+        isAuthenticated,
       }}
     >
       {children}

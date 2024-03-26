@@ -7,6 +7,7 @@ import { Toaster } from "react-hot-toast";
 import "./index.css";
 import AuthProvider from "./Context/AuthProvider.jsx";
 import { BrowserRouter } from "react-router-dom";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
 const query = new QueryClient();
 

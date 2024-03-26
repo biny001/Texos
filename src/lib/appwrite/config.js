@@ -15,4 +15,4 @@ client.setEndpoint("https://cloud.appwrite.io/v1").setProject(projectid);
 
 export const account = new Account(client);
 export const database = new Databases(client);
-export const avatar = new Avatars(client);
+export const Apiavatars = new Avatars(client);

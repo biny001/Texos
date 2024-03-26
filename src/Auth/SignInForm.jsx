@@ -6,7 +6,7 @@ import {
 } from "@/lib/react-query/queryAndMutations";
 import React, { useContext, useState } from "react";
 import { useForm } from "react-hook-form";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const SignInForm = () => {
   const {
@@ -15,15 +15,18 @@ const SignInForm = () => {
     formState: { errors, isValid }, // Destructure isValid from formState
   } = useForm();
 
-  const { checkAuthUser, loading, setAvatarUrl } = useContext(AuthContext);
+  const { checkAuthUser, loading } = useContext(AuthContext);
   const { mutateAsync: loginUser, isPending } = useLoginUser();
+  const navigate = useNavigate();
 
   async function onSubmit(values) {
     const userData = await loginUser(values);
-    if (userData) {
-      setAvatarUrl(userData?.avatarUrl);
 
-      checkAuthUser();
+    const isAuthenticated = await checkAuthUser();
+
+    if (isAuthenticated) navigate("/");
+    else {
+      return console.log("cant login. please try again");
     }
   }
 

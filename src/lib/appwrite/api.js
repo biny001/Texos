@@ -1,5 +1,5 @@
-import { account, avatar, database, Databaseid, userid } from "./config";
-import { ID } from "appwrite";
+import { account, Apiavatars, database, Databaseid, userid } from "./config";
+import { ID, Query } from "appwrite";
 
 //create user;
 export async function creatUser(value) {
@@ -11,10 +11,8 @@ export async function creatUser(value) {
       value?.password,
       value?.name
     );
-
+    const AvatarImg = Apiavatars.getInitials(value?.name);
     if (!userInfo) throw new Error();
-
-    await account.createEmailPasswordSession(value?.email, value?.password);
 
     const data = {
       accountId: userInfo?.$id,
@@ -22,25 +20,27 @@ export async function creatUser(value) {
       email: userInfo?.email,
       password: value?.password,
       username: value?.username,
+      avatarUrl: AvatarImg?.href,
     };
+
+    console.log(data);
+    // console.log(AvatarImg?.href);
+
     //write user to database
     const user = await database.createDocument(
       Databaseid,
       userid,
       ID.unique(),
-      data
+      {
+        ...data,
+      }
     );
 
     if (!user) throw new Error("Error writing to database");
 
-    const AvatarImg = await avatarInitials();
+    console.log(user);
 
-    const userData = {
-      ...user,
-      avatarUrl: AvatarImg,
-    };
-
-    return userData;
+    return user;
   } catch (err) {
     console.error(err);
   }
@@ -49,21 +49,14 @@ export async function creatUser(value) {
 //login user
 export async function loginUser(value) {
   try {
-    const userInfo = await account.createEmailPasswordSession(
+    const userInfo = await account.createEmailSession(
       value?.email,
       value?.password
     );
 
     if (!userInfo) throw new Error();
-    const AvatarImg = await avatarInitials();
 
-    console.log(userInfo);
-
-    const userData = {
-      ...userInfo,
-      avatarUrl: AvatarImg,
-    };
-    return userData;
+    return userInfo;
   } catch (err) {
     console.error(err);
   }
@@ -71,13 +64,15 @@ export async function loginUser(value) {
 
 //get user avatar
 
-export async function avatarInitials() {
+export async function avatarInitials(name) {
   try {
-    const avatarInitial = avatar.getInitials();
+    console.log(name);
+    const avatarInitial = Apiavatars.getInitials(name);
     console.log(avatarInitial);
 
     if (!avatarInitial) throw new Error("error getting avatar");
-    return avatarInitial;
+    console.log(avatarInitial.href);
+    return avatarInitial?.href;
   } catch (err) {
     console.error(err);
   }
@@ -89,10 +84,29 @@ export async function getActiveSession() {
   try {
     const activeUser = await account.get();
 
-    if (!activeUser) throw new Error();
-
-    console.log(activeUser);
+    // console.log(activeUser);
     return activeUser;
+  } catch (err) {
+    console.log(err);
+  }
+}
+
+export async function getCurrentUser() {
+  try {
+    const currentAccount = await getActiveSession();
+
+    if (!currentAccount) throw new Error("error getting currentAccount");
+
+    console.log(currentAccount, currentAccount.$id);
+    const currentUser = await database.listDocuments(Databaseid, userid, [
+      Query.equal("accountId", currentAccount.$id),
+    ]);
+
+    console.log(currentUser);
+
+    if (!currentUser) throw new Error("error getting  current user");
+
+    return currentUser.documents[0];
   } catch (err) {
     console.log(err);
   }
@@ -100,8 +114,12 @@ export async function getActiveSession() {
 
 export async function signOutLoggedInUser() {
   try {
-    await account.deleteSession("current");
-    console.log("logged out");
+    const data = await account.deleteSession("current");
+
+    console.log(data);
+    if (data) console.log("logged out");
+
+    return data;
   } catch (error) {
     console.log(error);
   }
