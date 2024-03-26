@@ -18,7 +18,7 @@ const PostInput = () => {
       <div className=" w-full h-full relative bg-black py-4  rounded-2xl  cursor-pointer">
         <img
           className=" w-full h-full    object-contain"
-          src={"src/assets/icons/file-upload.svg"}
+          src={"/icons/file-upload.svg"}
         />
         <div className=" w-full justify-center absolute bottom-1   flex text-slate-500 ">
           <input

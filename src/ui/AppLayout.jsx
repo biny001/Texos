@@ -8,7 +8,7 @@ import Options from "./Options";
 
 const AppLayout = () => {
   return (
-    <div className="relative   h-screen mx-auto      sm:w-full   lg:px-28">
+    <div className="relative   h-screen mx-auto  overflow-y-scroll     sm:w-full   lg:px-28">
       <div className="   sticky z-50    space-x-2 flex items-center justify-between py-8  px-3 ">
         <Link to={"/"}>
           <img
@@ -20,7 +20,7 @@ const AppLayout = () => {
         <Options />
       </div>
       <div className="   mx-auto  max-w-[600px]">
-        <div className=" w-full h-screen flex items-center justify-center">
+        <div className=" w-full h-[110vh] flex items-center justify-center">
           <Outlet />
         </div>
       </div>

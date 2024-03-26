@@ -62,4 +62,8 @@
   .label-div {
     @apply flex flex-col w-full rounded-sm gap-1 text-slate-300;
   }
+
+  .post-input {
+    @apply w-full h-10 px-4 py-2 bg-input outline-none   text-slate-500    bg-stone-800 rounded-md;
+  }
 }
