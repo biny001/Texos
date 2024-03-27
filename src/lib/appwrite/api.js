@@ -6,6 +6,7 @@ import {
   userid,
   storage,
   mediaid,
+  postid,
 } from "./config";
 import { ID, Query } from "appwrite";
 
@@ -133,8 +134,38 @@ export async function signOutLoggedInUser() {
   }
 }
 
+//upload to bucket
 export async function uploadMedia(file) {
-  const data = await storage.createFile(mediaid, ID.unique(), file);
-  console.log(data);
-  return data;
+  try {
+    const data = await storage.createFile(mediaid, ID.unique(), file);
+
+    if (!data) throw new Error("Error uploading file");
+
+    const metaData = storage.getFilePreview(mediaid, data.$id);
+    console.log(metaData);
+    return metaData;
+  } catch (err) {
+    console.log(err);
+  }
+}
+
+//upload to postDb
+
+export async function createNewPost(value) {
+  try {
+    const postinfo = { ...value, imageId: ID.unique() };
+    console.log(postinfo.imageUrl);
+    const post = await database.createDocument(
+      Databaseid,
+      postid,
+      ID.unique(),
+      postinfo
+    );
+
+    if (!post) throw new Error();
+    console.log("here are the values", post);
+    return post;
+  } catch (err) {
+    console.log(err);
+  }
 }

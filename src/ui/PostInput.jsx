@@ -1,11 +1,22 @@
-import React, { useCallback } from "react";
+import { useUploadFile } from "@/lib/react-query/queryAndMutations";
+import React, { useCallback, useState } from "react";
 import { useDropzone } from "react-dropzone";
 
-const PostInput = () => {
-  const onDrop = useCallback((acceptedFiles) => {
-    // Do something with the files
-    console.log(acceptedFiles[0]);
-  }, []);
+const PostInput = ({ register }) => {
+  const { mutateAsync: UploadFile, isPending } = useUploadFile();
+  const [imgInfo, setImageInfo] = useState(null);
+  const onDrop = useCallback(
+    async (acceptedFiles) => {
+      // Do something with the files
+      console.log(acceptedFiles[0]);
+      const imageDetails = await UploadFile(acceptedFiles[0]);
+      console.log(imageDetails);
+
+      setImageInfo(imageDetails);
+      register("imageUrl", imageDetails.href);
+    },
+    [UploadFile, register]
+  );
   const { getRootProps, getInputProps, isDragActive, open } = useDropzone({
     onDrop,
     noClick: true,
@@ -22,14 +33,15 @@ const PostInput = () => {
         <img
           type="file"
           className=" w-full h-full    object-contain"
-          src={"/icons/file-upload.svg"}
+          src={` ${imgInfo ? imgInfo?.href : "/icons/file-upload.svg"}`}
         />
-        <div className=" w-full justify-center absolute bottom-1   flex text-slate-500 ">
-          <input
-            className=" "
-            {...getInputProps()}
-            type={""}
-          />
+
+        <div
+          className={` ${
+            imgInfo ? "hidded" : " "
+          } w-full justify-center absolute bottom-1   flex text-slate-500`}
+        >
+          <input {...getInputProps()} />
           {isDragActive ? (
             <p>Drop the files here ...</p>
           ) : (
