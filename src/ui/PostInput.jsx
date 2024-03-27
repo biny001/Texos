@@ -9,6 +9,7 @@ const PostInput = () => {
   const { getRootProps, getInputProps, isDragActive, open } = useDropzone({
     onDrop,
     noClick: true,
+    noKeyboard: true,
   });
 
   return (
@@ -19,6 +20,7 @@ const PostInput = () => {
     >
       <div className=" w-full h-full relative bg-black py-4  rounded-2xl  cursor-pointer">
         <img
+          type="file"
           className=" w-full h-full    object-contain"
           src={"/icons/file-upload.svg"}
         />
