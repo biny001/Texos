@@ -4,16 +4,18 @@ import { useDropzone } from "react-dropzone";
 const PostInput = () => {
   const onDrop = useCallback((acceptedFiles) => {
     // Do something with the files
-    console.log(acceptedFiles);
+    console.log(acceptedFiles[0]);
   }, []);
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+  const { getRootProps, getInputProps, isDragActive, open } = useDropzone({
     onDrop,
+    noClick: true,
   });
 
   return (
     <div
       className="  rounded-xl   justify-center items-center  flex flex-col  min-w-[350px]   sm:w-full py-3 px-1 h-[250px]  border-blue-600"
       {...getRootProps()}
+      onClick={open}
     >
       <div className=" w-full h-full relative bg-black py-4  rounded-2xl  cursor-pointer">
         <img
