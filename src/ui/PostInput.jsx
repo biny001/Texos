@@ -2,7 +2,7 @@ import { useUploadFile } from "@/lib/react-query/queryAndMutations";
 import React, { useCallback, useState } from "react";
 import { useDropzone } from "react-dropzone";
 
-const PostInput = ({ register }) => {
+const PostInput = ({ register, isSuccess }) => {
   const { mutateAsync: UploadFile, isPending } = useUploadFile();
   const [imgInfo, setImageInfo] = useState(null);
   const onDrop = useCallback(
@@ -17,6 +17,7 @@ const PostInput = ({ register }) => {
     },
     [UploadFile, register]
   );
+  console.log(isSuccess);
   const { getRootProps, getInputProps, isDragActive, open } = useDropzone({
     onDrop,
     noClick: true,
@@ -30,11 +31,19 @@ const PostInput = ({ register }) => {
       onClick={open}
     >
       <div className=" w-full h-full relative bg-black py-4  rounded-2xl  cursor-pointer">
-        <img
-          type="file"
-          className=" w-full h-full    object-contain"
-          src={` ${imgInfo ? imgInfo?.href : "/icons/file-upload.svg"}`}
-        />
+        {isSuccess ? (
+          <img
+            type="file"
+            className=" w-full h-full    object-contain"
+            src={`/icons/file-upload.svg`}
+          />
+        ) : (
+          <img
+            type="file"
+            className=" w-full h-full    object-contain"
+            src={` ${imgInfo ? imgInfo?.href : "/icons/file-upload.svg"} `}
+          />
+        )}
 
         <div
           className={` ${

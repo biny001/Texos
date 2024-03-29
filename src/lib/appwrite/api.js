@@ -9,6 +9,7 @@ import {
   postid,
 } from "./config";
 import { ID, Query } from "appwrite";
+import { v4 as uuidv4 } from "uuid";
 
 //create user;
 export async function creatUser(value) {
@@ -150,10 +151,11 @@ export async function uploadMedia(file) {
 }
 
 //upload to postDb
+// console.log("random id", uuidv4());
 
 export async function createNewPost(value) {
   try {
-    const postinfo = { ...value, imageId: ID.unique() };
+    const postinfo = { ...value, imageId: uuidv4() };
     console.log(postinfo.imageUrl);
     const post = await database.createDocument(
       Databaseid,

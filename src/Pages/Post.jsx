@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import PostInput from "@/ui/PostInput";
 import { useForm } from "react-hook-form";
 import { AuthContext } from "@/Context/AuthProvider";
@@ -8,10 +8,12 @@ const Post = () => {
   const {
     handleSubmit,
     register,
-    formState: { errors },
+    formState: { errors, isSubmitSuccessful },
+    reset,
   } = useForm();
+
   const { info } = useContext(AuthContext);
-  const { mutate: createPost, isPending } = useCreatePost();
+  const { mutate: createPost, isPending, isSuccess } = useCreatePost();
 
   async function onSubmit(value) {
     const data = {
@@ -19,7 +21,21 @@ const Post = () => {
       creator: info?.accountId,
     };
     const post = await createPost(data);
+    console.log(post);
   }
+
+  useEffect(() => {
+    if (!isSubmitSuccessful) {
+      return;
+    }
+
+    reset({
+      caption: "",
+      tags: "",
+      imageUrl: "",
+      location: "",
+    });
+  }, [isSubmitSuccessful]);
   return (
     <div className="  h-full w-full  space-y-1 flex flex-col items-center px-4 pt-4">
       <h3 className=" w-full text-slate-400   text-lg ">Post</h3>
@@ -41,7 +57,10 @@ const Post = () => {
             {...register("caption")}
           />
         </div>
-        <PostInput register={(name, value) => register(name, { value })} />
+        <PostInput
+          register={(name, value) => register(name, { value })}
+          isSuccess={isSuccess}
+        />
         <div>
           <label
             className="text-slate-400"
