@@ -14,7 +14,7 @@ import { v4 as uuidv4 } from "uuid";
 //create user;
 export async function creatUser(value) {
   try {
-    console.log("here is the values", value);
+    // console.log("here is the values", value);
     const userInfo = await account.create(
       ID.unique(),
       value?.email,
@@ -33,7 +33,7 @@ export async function creatUser(value) {
       avatarUrl: AvatarImg?.href,
     };
 
-    console.log(data);
+    // console.log(data);
     // console.log(AvatarImg?.href);
 
     //write user to database
@@ -48,7 +48,7 @@ export async function creatUser(value) {
 
     if (!user) throw new Error("Error writing to database");
 
-    console.log(user);
+    // console.log(user);
 
     return user;
   } catch (err) {
@@ -78,10 +78,10 @@ export async function avatarInitials(name) {
   try {
     console.log(name);
     const avatarInitial = Apiavatars.getInitials(name);
-    console.log(avatarInitial);
+    // console.log(avatarInitial);
 
     if (!avatarInitial) throw new Error("error getting avatar");
-    console.log(avatarInitial.href);
+    // console.log(avatarInitial.href);
     return avatarInitial?.href;
   } catch (err) {
     console.error(err);
@@ -107,12 +107,12 @@ export async function getCurrentUser() {
 
     if (!currentAccount) throw new Error("error getting currentAccount");
 
-    console.log(currentAccount, currentAccount.$id);
+    // console.log(currentAccount, currentAccount.$id);
     const currentUser = await database.listDocuments(Databaseid, userid, [
       Query.equal("accountId", currentAccount.$id),
     ]);
 
-    console.log(currentUser);
+    // console.log(currentUser);
 
     if (!currentUser) throw new Error("error getting  current user");
 
@@ -126,8 +126,8 @@ export async function signOutLoggedInUser() {
   try {
     const data = await account.deleteSession("current");
 
-    console.log(data);
-    if (data) console.log("logged out");
+    // console.log(data);
+    // if (data) console.log("logged out");
 
     return data;
   } catch (error) {
@@ -143,7 +143,7 @@ export async function uploadMedia(file) {
     if (!data) throw new Error("Error uploading file");
 
     const metaData = storage.getFilePreview(mediaid, data.$id);
-    console.log(metaData);
+    // console.log(metaData);
     return metaData;
   } catch (err) {
     console.log(err);
@@ -165,8 +165,20 @@ export async function createNewPost(value) {
     );
 
     if (!post) throw new Error();
-    console.log("here are the values", post);
+    // console.log("here are the values", post);
     return post;
+  } catch (err) {
+    console.log(err);
+  }
+}
+
+export async function getPosts() {
+  try {
+    const { documents } = await database.listDocuments(Databaseid, postid);
+    // console.log(post);
+
+    if (!documents) throw new Error("Error getting posts");
+    return documents;
   } catch (err) {
     console.log(err);
   }

@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import PostInput from "@/ui/PostInput";
 import { useForm } from "react-hook-form";
 import { AuthContext } from "@/Context/AuthProvider";
@@ -13,6 +13,7 @@ const Post = () => {
   } = useForm();
 
   const { info } = useContext(AuthContext);
+  const [success, setsuccess] = useState(false);
   const { mutate: createPost, isPending, isSuccess } = useCreatePost();
 
   async function onSubmit(value) {
@@ -20,6 +21,8 @@ const Post = () => {
       ...value,
       creator: info?.accountId,
     };
+    setsuccess(false);
+
     const post = await createPost(data);
     console.log(post);
   }
@@ -58,8 +61,10 @@ const Post = () => {
           />
         </div>
         <PostInput
-          register={(name, value) => register(name, { value })}
           isSuccess={isSuccess}
+          register={(name, value) => register(name, { value })}
+          setsuccess={setsuccess}
+          success={success}
         />
         <div>
           <label

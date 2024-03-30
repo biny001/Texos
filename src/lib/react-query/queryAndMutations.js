@@ -4,6 +4,7 @@ import {
   createNewPost,
   creatUser,
   getActiveSession,
+  getPosts,
   loginUser,
   signOutLoggedInUser,
   uploadMedia,
@@ -63,5 +64,12 @@ export const useCreatePost = () => {
 export const useGetInitalAvatar = () => {
   return useMutation({
     mutationFn: (name) => avatarInitials(name),
+  });
+};
+
+export const useGetPost = () => {
+  return useQuery({
+    queryKey: ["posts"],
+    queryFn: getPosts,
   });
 };
