@@ -156,7 +156,7 @@ export async function uploadMedia(file) {
 export async function createNewPost(value) {
   try {
     const postinfo = { ...value, imageId: uuidv4() };
-    console.log(postinfo.imageUrl);
+    // console.log(postinfo.imageUrl);
     const post = await database.createDocument(
       Databaseid,
       postid,
@@ -165,7 +165,7 @@ export async function createNewPost(value) {
     );
 
     if (!post) throw new Error();
-    // console.log("here are the values", post);
+    console.log("here are the values", post);
     return post;
   } catch (err) {
     console.log(err);
@@ -174,12 +174,62 @@ export async function createNewPost(value) {
 
 export async function getPosts() {
   try {
-    const { documents } = await database.listDocuments(Databaseid, postid);
+    const { documents } = await database.listDocuments(Databaseid, postid, [
+      Query.orderDesc("$createdAt"),
+    ]);
     // console.log(post);
 
     if (!documents) throw new Error("Error getting posts");
     return documents;
   } catch (err) {
     console.log(err);
+  }
+}
+
+export async function likePost(data) {
+  console.log(data);
+  try {
+    // console.log(id, accountid);
+    const post = await database.getDocument(Databaseid, postid, data.postId);
+    const user = await database.getDocument(Databaseid, userid, data.userId);
+
+    console.log(post, user);
+    // Check if the user has already liked the post
+    const likedIndex = post.userlike?.indexOf(data.userId);
+    if (likedIndex === -1) {
+      // User hasn't liked the post, so add the like
+      post.userlike.push(data.userId);
+      await database.updateDocument(Databaseid, postid, data.postId, {
+        ...post,
+      });
+
+      // Update user's likedpost array
+      user.likedPost.push(postid);
+      await database.updateDocument(Databaseid, userid, data.userId, {
+        ...user,
+      });
+
+      return true; // Indicate that post was liked
+    } else {
+      // User has already liked the post, so remove the like
+      post.userlike.splice(likedIndex, 1);
+      await database.updateDocument(Databaseid, postid, data.postId, {
+        ...post,
+      });
+
+      // Update user's likedpost array
+      const likedPostIndex = user.likedPost?.indexOf(data.postId);
+      if (likedPostIndex !== -1) {
+        user.likedPost.splice(likedPostIndex, 1);
+        await database.updateDocument(Databaseid, userid, data.userId, {
+          ...user,
+        });
+      }
+
+      return false; // Indicate that post was unliked
+    }
+  } catch (error) {
+    console.error("Error liking post:", error);
+    throw new Error("Error liking post");
   }
 }

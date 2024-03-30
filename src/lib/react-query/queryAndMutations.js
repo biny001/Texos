@@ -5,6 +5,7 @@ import {
   creatUser,
   getActiveSession,
   getPosts,
+  likePost,
   loginUser,
   signOutLoggedInUser,
   uploadMedia,
@@ -32,6 +33,7 @@ export const useLoginUser = () => {
 };
 
 export const useGetActiveUser = () => {
+  const queryClient = useQueryClient();
   return useMutation({
     mutationFn: getActiveSession,
     // onSuccess: () => toast.success("user Created successfully"),
@@ -54,8 +56,12 @@ export const useUploadFile = () => {
 };
 
 export const useCreatePost = () => {
+  const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (value) => createNewPost(value),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["posts"] });
+    },
   });
 };
 
@@ -71,5 +77,17 @@ export const useGetPost = () => {
   return useQuery({
     queryKey: ["posts"],
     queryFn: getPosts,
+  });
+};
+
+export const useLikePost = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (data) => likePost(data),
+    onSuccess: () => {
+      // Invalidate cache or perform any actions after mutation success
+      // queryClient.invalidateQueries({ queryKey: ["posts"] });
+    },
   });
 };

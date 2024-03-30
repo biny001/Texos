@@ -1,6 +1,27 @@
 import { formatTimeDifference } from "@/utils/utility";
+import { useLikePost } from "@/lib/react-query/queryAndMutations";
+import { useContext } from "react";
+import { AuthContext } from "@/Context/AuthProvider";
 
 const PostCard = ({ post }) => {
+  // console.log(post);
+
+  const { mutate: likepost, isLoading: loading } = useLikePost();
+  const { info } = useContext(AuthContext);
+
+  const handleLike = async () => {
+    const data = {
+      postId: post.$id,
+      userId: info?.accountId,
+    };
+    try {
+      await likepost(data);
+      console.log("Post liked/unliked successfully");
+    } catch (error) {
+      console.error("Error liking/unliking post:", error);
+    }
+  };
+  if (loading) console.log(loading);
   return (
     <li
       className=" w-full "
@@ -35,7 +56,10 @@ const PostCard = ({ post }) => {
             />
           </div>
           <div className=" flex items-center justify-between py-1 px-2">
-            <button className=" text-slate-200">
+            <button
+              onClick={handleLike}
+              className=" text-slate-200"
+            >
               <img src={" /icons/like.svg"} />
             </button>
 

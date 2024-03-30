@@ -7,7 +7,7 @@ const Home = () => {
   const { data: posts, isLoading } = useGetPost();
 
   if (isLoading) return <div>Loading...</div>;
-  console.log("posts", posts);
+
   return (
     <div className=" h-full w-full">
       <ul className=" grid grid-cols-1 px-5 space-y-3 ">
