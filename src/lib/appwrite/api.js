@@ -187,44 +187,46 @@ export async function getPosts() {
 }
 
 export async function likePost(data) {
-  console.log(data);
   try {
-    // console.log(id, accountid);
     const post = await database.getDocument(Databaseid, postid, data.postId);
     const user = await database.getDocument(Databaseid, userid, data.userId);
 
-    console.log(post, user);
-    // Check if the user has already liked the post
-    const likedIndex = post.userlike?.indexOf(data.userId);
-    if (likedIndex === -1) {
+    const hasLiked = post?.userlike?.some(
+      (likedUser) => likedUser.$id === data.userId
+    );
+
+    if (!hasLiked) {
       // User hasn't liked the post, so add the like
-      post.userlike.push(data.userId);
+      //post.userlike.push(data.userId);
+      console.log("user hasnt liked this post till now");
       await database.updateDocument(Databaseid, postid, data.postId, {
-        ...post,
+        userlike: [...post.userlike, data.userId],
       });
 
       // Update user's likedpost array
-      user.likedPost.push(postid);
+      //user.likedpost.push(postid);
       await database.updateDocument(Databaseid, userid, data.userId, {
-        ...user,
+        likedpost: [...user.likedpost, data.postId],
       });
 
       return true; // Indicate that post was liked
     } else {
-      // User has already liked the post, so remove the like
-      post.userlike.splice(likedIndex, 1);
+      console.log("unliking post");
+      // User has already liked the post, so remove the like from the post document
+      const updatedUserlike = post.userlike.filter(
+        (user) => user.$id !== data.userId
+      );
       await database.updateDocument(Databaseid, postid, data.postId, {
-        ...post,
+        userlike: updatedUserlike,
       });
 
       // Update user's likedpost array
-      const likedPostIndex = user.likedPost?.indexOf(data.postId);
-      if (likedPostIndex !== -1) {
-        user.likedPost.splice(likedPostIndex, 1);
-        await database.updateDocument(Databaseid, userid, data.userId, {
-          ...user,
-        });
-      }
+      const updatedLikedPost = user.likedpost.filter(
+        (post) => post.$id !== data.postId
+      );
+      await database.updateDocument(Databaseid, userid, data.userId, {
+        likedpost: updatedLikedPost,
+      });
 
       return false; // Indicate that post was unliked
     }

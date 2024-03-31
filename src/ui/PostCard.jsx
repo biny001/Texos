@@ -1,12 +1,14 @@
 import { formatTimeDifference } from "@/utils/utility";
 import { useLikePost } from "@/lib/react-query/queryAndMutations";
-import { useContext } from "react";
+import { useContext, useState } from "react";
+
 import { AuthContext } from "@/Context/AuthProvider";
 
 const PostCard = ({ post }) => {
   // console.log(post);
 
-  const { mutate: likepost, isLoading: loading } = useLikePost();
+  const [like, setLike] = useState(false);
+  const { mutate: likepost, isPending } = useLikePost();
   const { info } = useContext(AuthContext);
 
   const handleLike = async () => {
@@ -15,13 +17,14 @@ const PostCard = ({ post }) => {
       userId: info?.accountId,
     };
     try {
-      await likepost(data);
-      console.log("Post liked/unliked successfully");
+      let checklike = await likepost(data);
+
+      console.log("Post liked/unliked successfully", checklike);
     } catch (error) {
       console.error("Error liking/unliking post:", error);
     }
   };
-  if (loading) console.log(loading);
+
   return (
     <li
       className=" w-full "
@@ -58,9 +61,20 @@ const PostCard = ({ post }) => {
           <div className=" flex items-center justify-between py-1 px-2">
             <button
               onClick={handleLike}
-              className=" text-slate-200"
+              className="text-slate-200 flex justify-center gap-1.5 items-start relative"
             >
-              <img src={" /icons/like.svg"} />
+              {isPending ? (
+                <img src="/icons/loader.svg" />
+              ) : (
+                <img
+                  className="h-full"
+                  src="/icons/like.svg"
+                />
+              )}
+
+              <span className=" text-xs">
+                {post?.userlike?.length > 0 ? post?.userlike.length : ""}
+              </span>
             </button>
 
             <button className=" text-slate-200">

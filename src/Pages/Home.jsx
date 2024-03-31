@@ -5,6 +5,7 @@ import React from "react";
 
 const Home = () => {
   const { data: posts, isLoading } = useGetPost();
+  // console.log(posts);
 
   if (isLoading) return <div>Loading...</div>;
 

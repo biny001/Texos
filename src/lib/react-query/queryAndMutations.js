@@ -86,8 +86,8 @@ export const useLikePost = () => {
   return useMutation({
     mutationFn: (data) => likePost(data),
     onSuccess: () => {
-      // Invalidate cache or perform any actions after mutation success
-      // queryClient.invalidateQueries({ queryKey: ["posts"] });
+      //  Invalidate cache or perform any actions after mutation success
+      queryClient.invalidateQueries({ queryKey: ["posts"] });
     },
   });
 };
