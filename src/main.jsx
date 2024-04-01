@@ -18,7 +18,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
       <IconContext.Provider value={{ style: { verticalAlign: "middle" } }}>
         <BrowserRouter>
           <AuthProvider>
-            <ReactQueryDevtools />
+            {/* <ReactQueryDevtools /> */}
             <App />
           </AuthProvider>
         </BrowserRouter>
