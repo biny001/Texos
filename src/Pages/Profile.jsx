@@ -1,4 +1,13 @@
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { AuthContext } from "@/Context/AuthProvider";
+import ProfileSetupModal from "@/ui/ProfileSetupModal";
 import React, { useContext } from "react";
 import { IoCalendar } from "react-icons/io5";
 
@@ -29,11 +38,17 @@ const Profile = () => {
               <IoCalendar className=" w-4 h-5" />
               Joined October 2022
             </p>
+            <div className=" flex gap-2 text-sm py-2  text-zinc-400">
+              <p>
+                <span className=" text-white">5</span> Following{" "}
+              </p>
+              <p>
+                <span className=" text-white">3</span> Followers{" "}
+              </p>
+            </div>
           </div>
           <div className=" absolute right-4 top-4  ">
-            <button className="rounded-xl text-xs bg-zinc-900 px-4 py-2 text-white   hover:bg-zinc-700 transition-colors ease-in-out duration-300">
-              setup profile
-            </button>
+            <ProfileSetupModal />
           </div>
         </div>
       </div>
